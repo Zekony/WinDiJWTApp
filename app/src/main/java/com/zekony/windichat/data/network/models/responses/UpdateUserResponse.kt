@@ -4,5 +4,5 @@ import com.zekony.windichat.data.network.models.responses.getUserResponse.Avatar
 
 
 data class UpdateUserResponse(
-    val avatars: Avatars
+    val avatars: Avatars?
 )

@@ -1,6 +1,5 @@
 package com.zekony.windichat.ui.authorization.mvi
 
-import android.util.Log
 import com.zekony.windichat.data.localStorage.TokenManager
 import com.zekony.windichat.data.localStorage.UserDatastore
 import com.zekony.windichat.domain.models.User
@@ -10,6 +9,7 @@ import com.zekony.windichat.utility.MviViewModel
 import com.zekony.windichat.utility.helperClasses.ApiResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 import org.orbitmvi.orbit.syntax.simple.blockingIntent
@@ -25,8 +25,13 @@ class AuthViewModel @Inject constructor(
     private val tokenManager: TokenManager
 ) : MviViewModel<AuthState, AuthSideEffect, AuthEvent>(AuthState()) {
 
+    init {
+        dispatch(AuthEvent.Initialize)
+    }
+
     override fun dispatch(event: AuthEvent) {
         when (event) {
+            AuthEvent.Initialize -> initialize()
             AuthEvent.Authenticate -> authenticate()
             AuthEvent.SendCode -> sendCode()
             AuthEvent.Register -> register()
@@ -43,6 +48,17 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    private fun initialize() = intent {
+        val user = userDatastore.loadUser().first()
+        if (user != null) {
+            reduce {
+                state.copy(
+                    phoneInput = user.phone.takeLast(10),
+                )
+            }
+        }
+    }
+
 
     private fun register() = intent {
         val response = authRepository.register(
@@ -51,7 +67,6 @@ class AuthViewModel @Inject constructor(
             state.usernameInput
         )
         processApiResponse(response) {
-            Log.d("Zenais", "got response for register: response: $response")
             with(it.data) {
                 saveTokens(refreshToken, accessToken)
             }
@@ -61,11 +76,9 @@ class AuthViewModel @Inject constructor(
     }
 
     private fun authenticate() = intent {
-        Log.d("Zenais", "authenticate called")
         val response =
             authRepository.sendAuthCode(state.chosenCountry?.countryPhoneNumberCode!! + state.phoneInput)
         processApiResponse(response) {
-            Log.d("Zenais", "got response for first call: response: $response")
             if (it.data.isSuccess) {
                 reduce { state.copy(confirmationDialogIsOn = true) }
             } else {
@@ -80,7 +93,6 @@ class AuthViewModel @Inject constructor(
             state.confirmationCodeInput
         )
         processApiResponse(response) { success ->
-            Log.d("Zenais", "got response for sending conf code: response: $success")
             with(success.data) {
                 if (!accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty()) {
                     saveTokens(refreshToken, accessToken)
@@ -90,7 +102,7 @@ class AuthViewModel @Inject constructor(
                 delay(200) //токен не успевает сохраниться до того как на экране Профиля пойдет запрос на юзера
                 postSideEffect(AuthSideEffect.NavigateProfileScreen)
             } else {
-                reduce { state.copy(isRegistered = UserRegistrationState.HaveNumber) }
+                reduce { state.copy(isRegistered = UserRegistrationState.Authorization) }
             }
         }
     }
@@ -106,7 +118,6 @@ class AuthViewModel @Inject constructor(
     }
 
 
-
     private fun saveTokens(refreshToken: String, accessToken: String) = intent {
         tokenManager.saveAccessToken(accessToken)
         tokenManager.saveRefreshToken(refreshToken)
@@ -114,7 +125,7 @@ class AuthViewModel @Inject constructor(
 
     @OptIn(OrbitExperimental::class)
     private fun confCodeInput(input: String) = blockingIntent {
-        if (input.length < 6) reduce { state.copy(confirmationCodeInput = input) }
+        if (input.length <= 6) reduce { state.copy(confirmationCodeInput = input.trim()) }
     }
 
     @OptIn(OrbitExperimental::class)
@@ -134,6 +145,11 @@ class AuthViewModel @Inject constructor(
     @OptIn(OrbitExperimental::class)
     private fun userNameInput(input: String) = blockingIntent {
         if (validateUsernameInput(input)) reduce { state.copy(usernameInput = input) }
+    }
+
+    @OptIn(OrbitExperimental::class)
+    private fun nameInput(input: String) = blockingIntent {
+        if (input.length <= 16) reduce { state.copy(nameInput = input) }
     }
 
     private fun validateUsernameInput(input: String): Boolean {
@@ -164,12 +180,6 @@ class AuthViewModel @Inject constructor(
             }
         }
         return true
-    }
-
-
-    @OptIn(OrbitExperimental::class)
-    private fun nameInput(input: String) = blockingIntent {
-        if (input.length <= 16) reduce { state.copy(nameInput = input) }
     }
 
     private suspend fun <T> SimpleSyntax<AuthState, AuthSideEffect>.processApiResponse(

@@ -18,7 +18,7 @@ suspend fun <T> apiResponseHandler(call: suspend () -> Response<T>): ApiResponse
                 response.errorBody()?.let { error ->
                     error.close()
                     val parsedError: ErrorResponse = Gson().fromJson(error.charStream(), ErrorResponse::class.java)
-                   ApiResponse.Failure(parsedError.message, parsedError.code)
+                   ApiResponse.Failure(parsedError.detail.firstOrNull()?.msg, response.code())
                 }
             }
         } catch (e: Exception) {

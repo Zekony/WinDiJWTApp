@@ -50,6 +50,7 @@ fun ProfileScreen(state: ProfileState, onEvent: (ProfileEvent) -> Unit) {
                 AsyncImage(
                     model = Constants.BASE_URL + state.currentUser.avatars.avatar,
                     contentDescription = null,
+                    placeholder = painterResource(id = R.drawable.loading_img),
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
                         .size(180.dp)

@@ -13,7 +13,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.zekony.windichat.R
 import com.zekony.windichat.ui.authorization.mvi.AuthEvent
 import com.zekony.windichat.ui.authorization.mvi.AuthState
 import com.zekony.windichat.ui.authorization.ui.composables.NumberConfirmationDialog
@@ -45,15 +47,13 @@ fun AuthorizationScreen(state: AuthState, onEvent: (AuthEvent) -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(text = "Авторизация", style = MaterialTheme.typography.titleLarge)
+        Text(text = stringResource(R.string.authorization), style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Номер телефона", style = MaterialTheme.typography.titleMedium)
+        Text(text = stringResource(R.string.number), style = MaterialTheme.typography.titleMedium)
         PhoneNumberTextField(state, onEvent)
         PrimaryButton(
-            onClick = {  
-                onEvent(AuthEvent.Authenticate)
-                      },
-            buttonText = "Войти",
+            onClick = { onEvent(AuthEvent.Authenticate) },
+            buttonText = stringResource(R.string.enter),
             enabled = state.phoneInput.length == 10
         )
     }

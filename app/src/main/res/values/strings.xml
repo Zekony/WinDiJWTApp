@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">WinDiChat</string>
-    <string name="profile">Profile</string>
-    <string name="chat">Chat</string>
+    <string name="profile">Профиль</string>
+    <string name="chat">Чаты</string>
 
     <string name="password_is_too_short">Password is too short</string>
     <string name="password_special_symbols_error">Password should contain 1 uppercase letter, 1 number and 1 special symbol</string>
@@ -9,6 +9,7 @@
     <string name="name_is_too_short_error">Name is too short</string>
     <string name="error_message">Error happened</string>
 
+    <string name="change_user_info">Изменить данные</string>
 
 <!--    Countries-->
     <string name="andorra">Andorra</string>
@@ -251,5 +252,18 @@
     <string name="swaziland">Swaziland</string>
     <string name="turks_and_caicos_islands">Turks and Caicos Islands</string>
     <string name="chad">Chad</string>
-    <string name="change_user_info">Изменить данные</string>
+    <string name="save_changes">Сохранить изменения</string>
+    <string name="birthday">Дата рождения</string>
+    <string name="city">Город</string>
+    <string name="name">Имя</string>
+    <string name="authorization">Авторизация</string>
+    <string name="number">Номер телефона</string>
+    <string name="enter">Войти</string>
+    <string name="name_example">Евгений</string>
+    <string name="username">Юзернейм</string>
+    <string name="username_example">Username_999_Username</string>
+    <string name="register">Зарегистрироваться</string>
+    <string name="confirm_dialog_message">Пожалуйста, подтвердите ваш номер телефона, вписав высланный вам код.</string>
+    <string name="ok">Подтвердить</string>
+    <string name="unspecified">Не указано</string>
 </resources>

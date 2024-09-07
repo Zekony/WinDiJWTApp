@@ -1,6 +1,5 @@
 package com.zekony.windichat.data.network.apiRepositories
 
-import android.util.Log
 import com.zekony.windichat.data.network.apiServices.AuthApiService
 import com.zekony.windichat.data.network.models.requests.CheckAuthCodeRequest
 import com.zekony.windichat.data.network.models.requests.RegisterRequest
@@ -25,14 +24,12 @@ class AuthRepositoryImpl @Inject constructor(
         phoneNumber: String,
         code: String
     ) = apiResponseHandler {
-        Log.d("Zenais", "AuthRepo: check number $phoneNumber code $code")
         authApiService.checkAuthCode(CheckAuthCodeRequest(phoneNumber, code))
     }
 
     override suspend fun sendAuthCode(
         phoneNumber: String,
     ) = apiResponseHandler {
-        Log.d("Zenais", "AuthRepo: check number $phoneNumber length ${phoneNumber.length}")
         authApiService.sendAuthCode(body = SendAuthCodeRequest(phoneNumber))
     }
 

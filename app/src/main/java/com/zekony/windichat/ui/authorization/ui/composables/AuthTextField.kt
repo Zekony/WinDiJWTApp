@@ -10,15 +10,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun AuthTextField(
+fun PrimaryTextField(
+    modifier: Modifier = Modifier,
     text: String,
     onInputEvent: (String) -> Unit,
     placeholder: String = "",
     enabled: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions(),
+    width: Float = 1f
 ) {
     TextField(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(width),
         value = text,
         onValueChange = { onInputEvent(it) },
         enabled = enabled,

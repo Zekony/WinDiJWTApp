@@ -1,7 +1,6 @@
 package com.zekony.windichat.data.localStorage
 
 import android.content.Context
-import android.util.Log
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.zekony.windichat.di.SingletonModule.Companion.dataStore
@@ -23,7 +22,6 @@ class TokenManager(
     }
 
     suspend fun saveAccessToken(token: String) {
-        Log.d("Zenais", "save Access token: $token")
         context.dataStore.edit { preferences ->
             preferences[ASS_TOKEN_KEY] = token
         }
@@ -42,7 +40,6 @@ class TokenManager(
     }
 
     suspend fun saveRefreshToken(token: String) {
-        Log.d("Zenais", "save Refresh token: $token")
         context.dataStore.edit { preferences ->
             preferences[REF_TOKEN_KEY] = token
         }

@@ -15,6 +15,7 @@ private val darkColorScheme = darkColorScheme(
     onPrimary = onPrimaryTextColor,
     background = background,
     onBackground = defaultTextColor,
+    secondary = secondarySurface,
     surface = lightSurface,
     onSurface = defaultTextColor,
 //    secondaryContainer = bottomBarColor,

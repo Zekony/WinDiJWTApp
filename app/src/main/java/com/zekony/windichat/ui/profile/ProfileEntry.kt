@@ -8,9 +8,14 @@ import android.provider.MediaStore
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
@@ -51,16 +56,22 @@ fun NavGraphBuilder.profileEntry(
                 } else {
                     BitmapFactory.decodeStream(context.contentResolver.openInputStream(selectedImageUri!!))
                 })
-                viewModel.dispatch(ProfileEvent.SaveImage(Avatar(userImage, selectedImageUri?.toString())))
+                viewModel.dispatch(ProfileEvent.SaveImage(Avatar(userImage, selectedImageUri.toString())))
             }
         }
 
-        if (state.downloadState == DownloadState.Downloading) {
-            LoadingScreen()
-        } else {
-            when (state.changeInfoState) {
-                ChangeInfo.Active -> ProfileChangingScreen(state, viewModel::dispatch)
-                ChangeInfo.Disabled -> ProfileScreen(state, viewModel::dispatch)
+        Scaffold(
+            snackbarHost = { SnackbarHost(hostState = snackbarHost) }
+        ) { paddingValues ->
+            Column(modifier = Modifier.padding(paddingValues)) {
+                if (state.downloadState == DownloadState.Downloading) {
+                    LoadingScreen()
+                } else {
+                    when (state.changeInfoState) {
+                        ChangeInfo.Active -> ProfileChangingScreen(state, viewModel::dispatch)
+                        ChangeInfo.Disabled -> ProfileScreen(state, viewModel::dispatch)
+                    }
+                }
             }
         }
 

@@ -9,4 +9,6 @@ internal val onPrimaryTextColor = Color(0xFFf7eeff)
 internal val background = Color(0xFFf7eeff)
 
 internal val lightSurface = Color(0xFFdca392)
+internal val secondarySurface = Color(0xFFE56B70)
+
 internal val defaultTextColor = Color(0xFF0b0511)

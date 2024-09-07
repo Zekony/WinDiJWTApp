@@ -1,6 +1,5 @@
 package com.zekony.windichat.ui.profile.mvi
 
-import android.util.Log
 import com.zekony.windichat.data.localStorage.TokenManager
 import com.zekony.windichat.data.localStorage.UserDatastore
 import com.zekony.windichat.data.network.models.requests.updateUserRequest.Avatar
@@ -57,20 +56,22 @@ class ProfileViewModel @Inject constructor(
                 reduce { state.copy(downloadState = DownloadState.Downloading) }
                 val apiUserResponse = userApiRepository.getUser()
                 processApiResponse(apiUserResponse) {
-                    Log.d("Zenais", "ProfileViewModel: collecting api user: user: ${it.data}")
-                    reduce { state.copy(currentUser = it.data.toUser(), downloadState = DownloadState.Idle) }
+                    reduce {
+                        state.copy(
+                            currentUser = it.data.toUser(),
+                            downloadState = DownloadState.Idle
+                        )
+                    }
                     userDatastore.saveUser(it.data.toUser())
                 }
             } else {
                 reduce { state.copy(currentUser = currentUser, downloadState = DownloadState.Idle) }
             }
-            Log.d("Zenais", "ProfileViewModel: collected datastore user: ${currentUser?.name}")
         }
     }
 
     private suspend fun SimpleSyntax<ProfileState, ProfileSideEffect>.collectActiveToken() {
         val activeToken = tokenManager.getAccessToken().first()
-        Log.d("Zenais", "ProfileViewModel: collecting token: $activeToken")
         if (activeToken.isNullOrEmpty()) postSideEffect(ProfileSideEffect.Logout)
     }
 
@@ -83,7 +84,6 @@ class ProfileViewModel @Inject constructor(
             )
             if (user != newUser) {
                 val response = userApiRepository.updateUser(newUser)
-                Log.d("Zenais", "response for saving changed User: $response")
                 processApiResponse(response) {
                     userDatastore.saveUser(newUser)
                     dispatch(ProfileEvent.ChangeInfoType(ChangeInfo.Disabled))
@@ -97,10 +97,17 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun saveImage(avatar: Avatar) = intent {
-        state.currentUser?.let {
-            val newUser =  it.copy(avatar = avatar)
+        state.currentUser?.let { user ->
+            val newUser = user.copy(avatar = avatar)
             val response = userApiRepository.updateUser(newUser)
-            if (response is ApiResponse.Success) userDatastore.saveUser(newUser)
+            processApiResponse(response) {
+                if (it.data.avatars != null) {
+                    val userWithAvatars = user.copy(avatars = it.data.avatars)
+                    userDatastore.saveUser(userWithAvatars)
+                    reduce { state.copy(currentUser = userWithAvatars) }
+                }
+            }
+
         }
     }
 
@@ -132,6 +139,7 @@ class ProfileViewModel @Inject constructor(
                 postSideEffect(ProfileSideEffect.PostErrorMessage(response.errorMessage))
                 reduce { state.copy(downloadState = DownloadState.Idle) }
             }
+
             is ApiResponse.Success -> {
                 processSuccess(response)
             }

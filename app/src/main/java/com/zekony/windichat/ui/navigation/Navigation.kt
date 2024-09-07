@@ -16,7 +16,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.zekony.windichat.ui.authorization.AUTHORIZATION_ROUTE
 import com.zekony.windichat.ui.authorization.authorizationEntry
-import com.zekony.windichat.ui.chat.CHAT_ROUTE
 import com.zekony.windichat.ui.chat.chatEntry
 import com.zekony.windichat.ui.profile.PROFILE_ROUTE
 import com.zekony.windichat.ui.profile.profileEntry
@@ -42,21 +41,21 @@ fun Navigation() {
                 enterTransition = {
                     fadeIn(
                         animationSpec = tween(
-                            300, easing = LinearEasing
+                            150, easing = LinearEasing
                         )
                     ) + slideIntoContainer(
-                        animationSpec = tween(300, easing = EaseIn),
+                        animationSpec = tween(150, easing = EaseIn),
                         towards = AnimatedContentTransitionScope.SlideDirection.Start
                     )
                 },
                 exitTransition = {
                     fadeOut(
                         animationSpec = tween(
-                            300, easing = LinearEasing
+                            150, easing = LinearEasing
                         )
                     ) + slideOutOfContainer(
-                        animationSpec = tween(300, easing = EaseOut),
-                        towards = AnimatedContentTransitionScope.SlideDirection.End
+                        animationSpec = tween(150, easing = EaseOut),
+                        towards = AnimatedContentTransitionScope.SlideDirection.Start
                     )
                 },
                 modifier = Modifier.padding(innerPadding)
@@ -72,7 +71,6 @@ fun Navigation() {
                     navigateToAuthorization = {
                         navController.navigate(AUTHORIZATION_ROUTE) {
                             popUpTo(PROFILE_ROUTE) { inclusive = true }
-                            popUpTo(CHAT_ROUTE) { inclusive = true }
                         }
                     }
                 )

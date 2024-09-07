@@ -12,6 +12,7 @@ sealed interface AuthEvent {
     data class NameInput(val input: String): AuthEvent
     data class UserNameInput(val input: String): AuthEvent
 
+    data object Initialize : AuthEvent
     data object Authenticate : AuthEvent
     data object SendCode : AuthEvent
     data object Register : AuthEvent

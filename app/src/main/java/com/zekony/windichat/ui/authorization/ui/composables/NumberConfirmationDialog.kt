@@ -14,8 +14,10 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.zekony.windichat.R
 import com.zekony.windichat.ui.authorization.mvi.AuthEvent
 
 
@@ -31,7 +33,7 @@ fun NumberConfirmationDialog(codeInput: String, onEvent: (AuthEvent) -> Unit) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = "Пожалуйста, подтвердите ваш номер телефона, вписав высланный вам код.",
+                text = stringResource(R.string.confirm_dialog_message),
                 style = MaterialTheme.typography.titleMedium
             )
             TextField(
@@ -46,7 +48,7 @@ fun NumberConfirmationDialog(codeInput: String, onEvent: (AuthEvent) -> Unit) {
             Button(
                 onClick = { onEvent(AuthEvent.SendCode) }, shape = RoundedCornerShape(6.dp)
             ) {
-                Text(text = "Подтвердить", style = MaterialTheme.typography.labelMedium)
+                Text(text = stringResource(R.string.ok), style = MaterialTheme.typography.labelMedium)
             }
         }
     }
